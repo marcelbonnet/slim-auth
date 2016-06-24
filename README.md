@@ -16,6 +16,10 @@ $ composer require marcelbonnet/slim-auth
 - Authentication through RDBMS
 - Authorization based on user roles kept in a RDBMS' table.
 
+## RDBMS Mechanism
+
+Agnostic table design. The only thing slim-auth needs to know is where users and roles are stored , using an instance of Doctrine ORM's EntityManager. 
+
 # Requirements
 
 - Slim Framework v. 3.x
