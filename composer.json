@@ -10,7 +10,7 @@
 	"authors" : [{
 			"name" : "Marcel Bonnet",
 			"role" : "developer",
-			"homepage" : "github.com/marcelbonnet"
+			"homepage" : "https://github.com/marcelbonnet"
 		}
 	],
 	"keywords" : [
@@ -36,12 +36,12 @@
 	},
 	"autoload" : {
 		"psr-4" : {
-			"JeremyKendall\\Slim\\Auth\\" : "src/"
+			"marcelbonnet\\Slim\\Auth\\" : "src/"
 		}
 	},
 	"autoload-dev" : {
 		"psr-4" : {
-			"JeremyKendall\\Slim\\Auth\\Tests\\" : "tests/"
+			"marcelbonnet\\Slim\\Auth\\Tests\\" : "tests/"
 		}
 	},
 	"suggest" : {
