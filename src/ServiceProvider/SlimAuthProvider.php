@@ -3,10 +3,10 @@
 /**
  * Slim Auth.
  *
- * @link      http://github.com/jeremykendall/slim-auth Canonical source repo
+ * @link      http://github.com/marcelbonnet/slim-auth Canonical source repo
  *
- * @copyright Copyright (c) 2013-2016 Jeremy Kendall (http://about.me/jeremykendall)
- * @license   http://github.com/jeremykendall/slim-auth/blob/master/LICENSE MIT
+ * @copyright Copyright (c) 2013-2016 Jeremy Kendall (http://about.me/marcelbonnet)
+ * @license   http://github.com/marcelbonnet/slim-auth/blob/master/LICENSE MIT
  */
 namespace marcelbonnet\Slim\Auth\ServiceProvider;
 
@@ -30,7 +30,7 @@ final class SlimAuthProvider implements ServiceProviderInterface
     public function register(Container $pimple)
     {
         // This must be set to true or Slim Auth will not work.
-        // @see https://github.com/jeremykendall/slim-auth/issues/37
+        // @see https://github.com/marcelbonnet/slim-auth/issues/37
         $pimple['settings']['determineRouteBeforeAppMiddleware'] = true;
 
         $pimple['auth'] = function ($c) {
@@ -56,18 +56,18 @@ final class SlimAuthProvider implements ServiceProviderInterface
                 $redirectNotAuthorized = $c['redirectNotAuthorized'];
             }
 
-            return new \JeremyKendall\Slim\Auth\Handlers\RedirectHandler(
+            return new \marcelbonnet\Slim\Auth\Handlers\RedirectHandler(
                 $redirectNotAuthenticated,
                 $redirectNotAuthorized
             );
         };
 
         $pimple['throwHttpExceptionHandler'] = function ($c) {
-            return new \JeremyKendall\Slim\Auth\Handlers\ThrowHttpExceptionHandler();
+            return new \marcelbonnet\Slim\Auth\Handlers\ThrowHttpExceptionHandler();
         };
 
         $pimple['slimAuthRedirectMiddleware'] = function ($c) {
-            return new \JeremyKendall\Slim\Auth\Middleware\Authorization(
+            return new \marcelbonnet\Slim\Auth\Middleware\Authorization(
                 $c->get('auth'),
                 $c->get('acl'),
                 $c->get('redirectHandler')
@@ -75,7 +75,7 @@ final class SlimAuthProvider implements ServiceProviderInterface
         };
 
         $pimple['slimAuthThrowHttpExceptionMiddleware'] = function ($c) {
-            return new \JeremyKendall\Slim\Auth\Middleware\Authorization(
+            return new \marcelbonnet\Slim\Auth\Middleware\Authorization(
                 $c->get('auth'),
                 $c->get('acl'),
                 $c->get('throwHttpExceptionHandler')
@@ -83,7 +83,7 @@ final class SlimAuthProvider implements ServiceProviderInterface
         };
 
         $pimple['authenticator'] = function ($c) {
-            return new \JeremyKendall\Slim\Auth\Authenticator($c->get('auth'));
+            return new \marcelbonnet\Slim\Auth\Authenticator($c->get('auth'));
         };
     }
 }
