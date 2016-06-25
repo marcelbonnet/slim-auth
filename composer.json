@@ -48,6 +48,5 @@
 		}
 	},
 	"suggest" : {
-		"zendframework/zend-db" : "For the Zend\\Authentication\\Adapter\\DbTable adapters."
 	}
 }

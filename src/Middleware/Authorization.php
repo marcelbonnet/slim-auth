@@ -1,12 +1,11 @@
 <?php
-
 /**
  * Slim Auth.
  *
- * @link      http://github.com/jeremykendall/slim-auth Canonical source repo
+ * @link      http://github.com/marcelbonnet/slim-auth
  *
- * @copyright Copyright (c) 2013-2016 Jeremy Kendall (http://about.me/jeremykendall)
- * @license   http://github.com/jeremykendall/slim-auth/blob/master/LICENSE MIT
+ * @copyright Copyright (c) 2013-2016 Jeremy Kendall (http://about.me/jeremykendall) with changes: (c) 2016 Marcel Bonnet (http://github.com/marcelbonnet)
+ * @license   MIT
  */
 namespace marcelbonnet\Slim\Auth\Middleware;
 
@@ -15,6 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Permissions\Acl\AclInterface;
+use marcelbonnet\Slim\Auth\Route\AuthorizableRoute;
 
 /**
  * Authorization middleware: Checks user's authorization to access the
@@ -81,7 +81,13 @@ final class Authorization
         $role = $this->getRole($this->auth->getIdentity());
         $resource = $route->getPattern();
         $privilege = $request->getMethod();
-        $isAllowed = $this->acl->isAllowed($role, $resource, $privilege);
+        $isAllowed = false;
+        
+        if(!$this->acl && $route instanceof AuthorizableRoute){
+        	$route->getAcl()->isAllowed($role, $resource, $privilege);
+        } else {
+	        $this->acl->isAllowed($role, $resource, $privilege);
+        }
         $isAuthenticated = $this->auth->hasIdentity();
 
         if ($isAllowed) {
@@ -126,4 +132,29 @@ final class Authorization
 
         return 'guest';
     }
+    
+    /**
+     * Sets an AuthenticationServiceInterface
+     * @param AuthenticationServiceInterface $auth
+     */
+    public function setAuth(AuthenticationServiceInterface $auth) {
+    	$this->auth = $auth;
+    }
+    
+    /**
+     * Sets an ACL Interface
+     * @param AclInterface $acl
+     */
+    public function setAcl(AclInterface $acl) {
+    	$this->acl = $acl;
+    }
+    
+    /**
+     * Sets Handlers
+     * @param AuthHandler $handler
+     */
+    public function setHandler(AuthHandler $handler) {
+    	$this->handler = $handler;
+    }
 }
+
