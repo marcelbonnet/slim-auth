@@ -32,7 +32,7 @@ class AuthorizableRoute extends Route {
 	public function __construct($methods, $pattern, $callable, $groups, $identifier, $acl=null)
 	{
 		$this->acl = $acl;
-		super($methods, $pattern, $callable, $groups, $identifier);
+		parent::__construct($methods, $pattern, $callable, $groups, $identifier);
 	}
 	
 	/**
@@ -40,7 +40,8 @@ class AuthorizableRoute extends Route {
 	 * @param string|array $roles
 	 */
 	public function allow($roles){
-		//var_dump("roles invocado com " . var_dump($roles) );
+		//TODO
+		//conflita com new Acl() se houver resources adicionados e tals, ou terá uma prioridade ?
 	}
 	
 	/**

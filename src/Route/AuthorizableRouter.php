@@ -28,7 +28,7 @@ class AuthorizableRouter extends Router {
 	public function __construct(RouteParser $parser = null, $acl=null)
 	{
 		$this->acl = $acl;
-		super($parser);
+		parent::__construct(($parser);
 	}
 
 	/**
