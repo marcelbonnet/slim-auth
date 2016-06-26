@@ -13,9 +13,9 @@ use Slim\Router;
 class AuthorizableRouter extends Router {
 	
 	/**
-	 * AclInterface shared with AuthorizableRoute
+	 * \Zend\Permissions\Acl\Acl shared with AuthorizableRoute
 	 *
-	 * @var AclInterface
+	 * @var \Zend\Permissions\Acl\Acl
 	 */
 	protected $acl;
 	
@@ -32,7 +32,7 @@ class AuthorizableRouter extends Router {
 	}
 
 	/**
-	 * @return AclInterface
+	 * @return \Zend\Permissions\Acl\Acl
 	 */
 	public function getAcl() {
 		return $this->acl;

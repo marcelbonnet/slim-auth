@@ -83,11 +83,12 @@ final class Authorization
         $privilege = $request->getMethod();
         $isAllowed = false;
         
-        if(!$this->acl && $route instanceof AuthorizableRoute){
-        	$route->getAcl()->isAllowed($role, $resource, $privilege);
-        } else {
-	        $this->acl->isAllowed($role, $resource, $privilege);
-        }
+//         if(!$this->acl && $route instanceof AuthorizableRoute){
+//         	$route->getAcl()->isAllowed($role, $resource, $privilege);
+//         } else {
+// 	        $this->acl->isAllowed($role, $resource, $privilege);
+//         }
+        $this->acl->isAllowed($role, $resource, $privilege);
         $isAuthenticated = $this->auth->hasIdentity();
 
         if ($isAllowed) {

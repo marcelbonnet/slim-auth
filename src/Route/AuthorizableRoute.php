@@ -13,21 +13,21 @@ use Slim\Route;
 class AuthorizableRoute extends Route {
 	
 	/**
-	 * AclInterface.
+	 * Zend Acl
 	 *
-	 * @var AclInterface
+	 * @var \Zend\Permissions\Acl\Acl
 	 */
 	protected $acl;
 	
 	/**
 	 * Create new route
      *
-     * @param string[]     $methods The route HTTP methods
-     * @param string       $pattern The route pattern
-     * @param callable     $callable The route callable
-     * @param int          $identifier The route identifier
-     * @param RouteGroup[] $groups The parent route groups
-	 * @param AclInterface $acl
+     * @param string[]     				$methods The route HTTP methods
+     * @param string       				$pattern The route pattern
+     * @param callable     				$callable The route callable
+     * @param int          				$identifier The route identifier
+     * @param RouteGroup[] 				$groups The parent route groups
+	 * @param \Zend\Permissions\Acl\Acl 	$acl
 	 */
 	public function __construct($methods, $pattern, $callable, $groups, $identifier, &$acl=null)
 	{
@@ -40,12 +40,11 @@ class AuthorizableRoute extends Route {
 	 * @param string|array $roles
 	 */
 	public function allow($roles){
-		//TODO
-		//conflita com new Acl() se houver resources adicionados e tals, ou terá uma prioridade ?
+// 		$this->getAcl()->a
 	}
 	
 	/**
-	 * @return AclInterface
+	 * @return \Zend\Permissions\Acl\Acl
 	 */
 	public function getAcl() {
 		return $this->acl;
