@@ -52,7 +52,7 @@ final class Authorization
      */
     public function __construct(
         AuthenticationServiceInterface $auth,
-        AclInterface $acl,
+        AclInterface &$acl,
         AuthHandler $handler
     ) {
         $this->auth = $auth;

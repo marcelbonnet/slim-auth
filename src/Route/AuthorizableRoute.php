@@ -29,7 +29,7 @@ class AuthorizableRoute extends Route {
      * @param RouteGroup[] $groups The parent route groups
 	 * @param AclInterface $acl
 	 */
-	public function __construct($methods, $pattern, $callable, $groups, $identifier, $acl=null)
+	public function __construct($methods, $pattern, $callable, $groups, $identifier, &$acl=null)
 	{
 		$this->acl = $acl;
 		parent::__construct($methods, $pattern, $callable, $groups, $identifier);

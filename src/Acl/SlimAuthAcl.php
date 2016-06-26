@@ -20,7 +20,7 @@ use Zend\Permissions\Acl\Acl as ZendAcl;
  * @see \marcelbonnet\Slim\Auth\Acl\Acl::__construct()
  * @since 0.0.2
  */
-class Acl extends ZendAcl
+class SlimAuthAcl extends ZendAcl
 {
 	protected $defaultPrivilege = array('GET');
 	

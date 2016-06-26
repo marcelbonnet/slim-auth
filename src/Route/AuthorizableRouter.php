@@ -25,7 +25,7 @@ class AuthorizableRouter extends Router {
 	 * @param RouteParser $parser
 	 * @param AclInterface $acl
 	 */
-	public function __construct(RouteParser $parser = null, $acl=null)
+	public function __construct(RouteParser $parser = null, &$acl=null)
 	{
 		$this->acl = $acl;
 		parent::__construct($parser);
