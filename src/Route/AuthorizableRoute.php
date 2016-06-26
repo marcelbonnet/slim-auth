@@ -40,7 +40,7 @@ class AuthorizableRoute extends Route {
 	 * @param string|array $roles
 	 */
 	public function allow($roles){
-// 		$this->getAcl()->a
+		$this->getAcl()->allow($roles, $this->getPattern(), $this->getMethods());
 	}
 	
 	/**
