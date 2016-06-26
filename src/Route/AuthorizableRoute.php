@@ -31,7 +31,7 @@ class AuthorizableRoute extends Route {
 	 */
 	public function __construct($methods, $pattern, $callable, $groups, $identifier, &$acl=null)
 	{
-		$this->acl = $acl;
+		$this->acl = &$acl;
 		parent::__construct($methods, $pattern, $callable, $groups, $identifier);
 	}
 	
@@ -40,7 +40,11 @@ class AuthorizableRoute extends Route {
 	 * @param string|array $roles
 	 */
 	public function allow($roles){
+		if(! $this->getAcl()->hasResource($this->getPattern()) ){
+			$this->getAcl()->addResource($this->getPattern());
+		}
 		$this->getAcl()->allow($roles, $this->getPattern(), $this->getMethods());
+		return $this;
 	}
 	
 	/**

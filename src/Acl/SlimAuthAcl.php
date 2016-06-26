@@ -22,7 +22,7 @@ use Zend\Permissions\Acl\Acl as ZendAcl;
  */
 class SlimAuthAcl extends ZendAcl
 {
-	protected $defaultPrivilege = array('GET');
+// 	protected $defaultPrivilege = array('GET');
 	
 	/**
 	 * Constructor
@@ -32,7 +32,21 @@ class SlimAuthAcl extends ZendAcl
 	public function __construct()
 	{
 		/*
-		 * EXAMPLE how to configure
+		 * When Using AuthorizableRoute, just roles must be
+		 * manually added.
+		 * The resource and privilegies are auto added by AuthorizableRoute::allow
+		 * 
+		
+		$this->addRole('guest');
+		// member role "extends" guest, meaning the member role will get all of
+		// the guest role permissions by default
+		$this->addRole('member', 'guest');
+		$this->addRole('admin');
+		
+		 */
+		
+		/*
+		 * EXAMPLE how to configure (OLD)
 		// APPLICATION ROLES
 		$this->addRole('guest');
 		// member role "extends" guest, meaning the member role will get all of
