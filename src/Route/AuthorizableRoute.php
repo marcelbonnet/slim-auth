@@ -40,10 +40,17 @@ class AuthorizableRoute extends Route {
 	 * @param string|array $roles
 	 */
 	public function allow($roles){
-		if(! $this->getAcl()->hasResource($this->getPattern()) ){
-			$this->getAcl()->addResource($this->getPattern());
+		/*
+		 * TODO: $this->getPattern() resolves the wrong uri/route, and return the route's group inner uri.
+		 */
+		$uri		= $this->container['request']->getUri();
+// 		$resource 	= $uri->getBasePath() ."/". $uri->getPath();
+// 		$resource 	= preg_match("|^\/$|" , $uri->getPath())? $uri->getPath() : "/". $uri->getPath();
+		$resource	= $this->getIdentifier();
+		if(! $this->getAcl()->hasResource($resource) ){
+			$this->getAcl()->addResource($resource);
 		}
-		$this->getAcl()->allow($roles, $this->getPattern(), $this->getMethods());
+		$this->getAcl()->allow($roles, $resource, $this->getMethods());
 		return $this;
 	}
 	

@@ -79,7 +79,8 @@ final class Authorization
         }
 
         $role = $this->getRole($this->auth->getIdentity());
-        $resource = $route->getPattern();
+        //$resource = $route->getPattern();
+        $resource = $route->getIdentifier();
         $privilege = $request->getMethod();
 //         $isAllowed = false;
         
