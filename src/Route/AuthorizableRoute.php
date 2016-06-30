@@ -42,8 +42,13 @@ class AuthorizableRoute extends Route {
 	public function allow($roles){
 		/*
 		 * TODO: $this->getPattern() resolves the wrong uri/route, and return the route's group inner uri.
+		 * could use Twig's:
+		public function pathFor($name, $data = [], $queryParams = [], $appName = 'default')
+	    {
+	        return $this->router->pathFor($name, $data, $queryParams);
+	    }
 		 */
-		$uri		= $this->container['request']->getUri();
+// 		$uri		= $this->container['request']->getUri();
 // 		$resource 	= $uri->getBasePath() ."/". $uri->getPath();
 // 		$resource 	= preg_match("|^\/$|" , $uri->getPath())? $uri->getPath() : "/". $uri->getPath();
 		$resource	= $this->getIdentifier();
