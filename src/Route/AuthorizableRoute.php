@@ -51,7 +51,9 @@ class AuthorizableRoute extends Route {
 // 		$uri		= $this->container['request']->getUri();
 // 		$resource 	= $uri->getBasePath() ."/". $uri->getPath();
 // 		$resource 	= preg_match("|^\/$|" , $uri->getPath())? $uri->getPath() : "/". $uri->getPath();
-		$resource	= $this->getIdentifier();
+// 		$resource	= $this->getIdentifier();
+		$resource	= $this->getPattern();
+// 		var_dump($this->getPattern());
 		if(! $this->getAcl()->hasResource($resource) ){
 			$this->getAcl()->addResource($resource);
 		}

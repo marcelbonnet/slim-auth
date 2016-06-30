@@ -79,8 +79,16 @@ final class Authorization
         }
 
         $role = $this->getRole($this->auth->getIdentity());
-        //$resource = $route->getPattern();
-        $resource = $route->getIdentifier();
+//         $resource = $route->getPattern();
+
+        /*
+         * Hope fix problems when an optional / maybe followed by arguments
+         * Route::group('/venues', function (){
+				Route::get('/', ...
+				Route::get('[/{id:[0-9]+}]', ...
+         */
+        $resource = preg_replace("|\[\/[^\[].*\]|", "/", $route->getPattern());
+//         $resource = $route->getIdentifier();
         $privilege = $request->getMethod();
 //         $isAllowed = false;
         
