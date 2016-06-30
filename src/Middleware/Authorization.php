@@ -79,15 +79,18 @@ final class Authorization
         }
 
         $role = $this->getRole($this->auth->getIdentity());
-//         $resource = $route->getPattern();
+        $resource = $route->getPattern();
 
         /*
+         * THIS BUG HAPPENED WHEN ROUTE DID NOT SET ->allow([roles])
          * Hope fix problems when an optional / maybe followed by arguments
          * Route::group('/venues', function (){
 				Route::get('/', ...
 				Route::get('[/{id:[0-9]+}]', ...
+				
+		   dont work for groups that do not have a sub route like '/'
          */
-        $resource = preg_replace("|\[\/[^\[].*\]|", "/", $route->getPattern());
+//         $resource = preg_replace("|\[\/[^\[].*\]|", "/", $route->getPattern());
 //         $resource = $route->getIdentifier();
         $privilege = $request->getMethod();
 //         $isAllowed = false;
