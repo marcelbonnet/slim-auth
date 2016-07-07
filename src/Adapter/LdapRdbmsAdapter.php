@@ -227,9 +227,10 @@ class LdapRdbmsAdapter extends AbstractAdapter
      */
     private function findUserRoles()
     {
+    	//FIXME: precisa de um para para r.user no JOIN: issue #8
     	$dql = sprintf("SELECT r.%s 
     			FROM %s r
-    			JOIN %s u
+    			JOIN %s u WITH u.id = r.user
     			WHERE u.%s = :username",
     			$this->roleAttribute,
     			$this->roleEntity,
