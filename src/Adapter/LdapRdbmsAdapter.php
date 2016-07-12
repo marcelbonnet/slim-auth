@@ -172,6 +172,13 @@ class LdapRdbmsAdapter extends AbstractAdapter
     					array('Invalid username and/or password provided'));
     		}
     		
+    		//FIXME: passar por referência a coluna de ativação #9
+    		if(!$user["activated"]){
+    			return new AuthenticationResult(AuthenticationResult::FAILURE,
+    					array(),
+    					array('User is not activated.'));
+    		}
+    		
     		$currentHashAlgorithm   =  $this->pwdHashAlgo;
     		$currentHashOptions  =  array('cost'   => $this->pwdHashFactor ); 
     		$passwordNeedsRehash =  password_needs_rehash(
