@@ -207,7 +207,8 @@ class LdapRdbmsAdapter extends AbstractAdapter
      */
     private function findUser($username)
     {
-    	$dql = sprintf("SELECT u.id, u.%s, u.%s
+    	//FIXME: passar por referência a coluna de ativação #9
+    	$dql = sprintf("SELECT u.id, u.%s, u.%s, u.activated
     			FROM %s u
     			WHERE u.%s = :username",
     			$this->identityAttribute,
