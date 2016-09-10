@@ -44,12 +44,14 @@ class LdapRdbmsAdapter extends AbstractAdapter
     protected $roleEntity 				= null;
     protected $roleAttribute 			= null;
     protected $roleAssociationAttribute = null;
+    protected $roleUserAssociationAttribute = null;
     protected $identityAttribute 		= null;
     protected $userEntity 				= null;
     protected $credencialAttribute		= null;
     protected $authType 				= null;
     protected $pwdHashFactor			= null;
     protected $pwdHashAlgo			= null;
+    protected $options				= null; 
 
     /**
      * As we this Adapter uses Doctrine ORM, we suppose
@@ -64,36 +66,49 @@ class LdapRdbmsAdapter extends AbstractAdapter
      * @param string $configIniFile ini file with LDAP settings
      * @param EntityManager $entityManager
      * @param string $roleFQCN Role Entity fully qualified class name
-     * @param object $roleAttribute attribute of $roleFQCN holding roles
-     * @param object $userEntity User Entity FQCN (fully qualified class name)
+     * @param string $roleAttribute attribute of $roleFQCN holding roles
+     * @param string $roleUserAssociationAttribute attribute of $roleFQCN holding its user object
+     * @param string $userEntity User Entity FQCN (fully qualified class name)
      * @param string $identityAttribute atrribute of $userEntity holding username
      * @param string $credencialAttribute atrribute of $userEntity holding password
      * @param integer $authType one of AUTHENTICATE_LDAP|AUTHENTICATE_RDBMS
      * @param number $pwdHashFactor if using AUTHENTICATE_RDBMS, than sets the password hash factor
      * @param string $pwdHashAlgo if using AUTHENTICATE_RDBMS, than sets the password algorithm
+     * @param array $options 
+	     <pre>
+	     	If authentication should check if user is activated (account is valid, whatever):
+	     	[
+					'checkUserIsActivated'	=> 'my_column_name', //user's column to check if user is activated
+					'userIsActivatedFlag'		=> true //what value is expected if user is activated. Otherwise, authentication will fail
+			]
+	     </pre>
      */
     public function __construct(
     	$configIniFile,
         EntityManager $entityManager,
     	$roleFQCN = null,
     	$roleAttribute = null,
+    	$roleUserAssociationAttribute = null,
     	$userEntity,
     	$identityAttribute = NULL,
     	$credencialAttribute = null,
     	$authType = self::AUTHENTICATE_LDAP,
     	$pwdHashFactor = 10,
-    	$pwdHashAlgo = PASSWORD_DEFAULT
+    	$pwdHashAlgo = PASSWORD_DEFAULT,
+    	$options
     ) {
     	self::$configFile		= $configIniFile;
     	$this->entityManager 	= $entityManager;
     	$this->roleEntity		= $roleFQCN;
     	$this->roleAttribute	= $roleAttribute;
     	$this->userEntity		= $userEntity;
+    	$this->roleUserAssociationAttribute = $roleUserAssociationAttribute;
     	$this->identityAttribute= $identityAttribute;
     	$this->credencialAttribute= $credencialAttribute;
     	$this->authType			= $authType;
     	$this->pwdHashFactor	= $pwdHashFactor;
     	$this->pwdHashAlgo		= $pwdHashAlgo;
+    	$this->options			= $options;
     }
 
     /**
@@ -172,8 +187,13 @@ class LdapRdbmsAdapter extends AbstractAdapter
     					array('Invalid username and/or password provided'));
     		}
     		
-    		//FIXME: passar por referência a coluna de ativação #9
-    		if(!$user["activated"]){
+    		/*
+    		 * Optional auth test: is user account activated ?
+    		 */
+    		if( $this->hasOption('checkUserIsActivated') &&
+    			$this->hasOption('userIsActivatedFlag') &&
+    			$user[$this->options['checkUserIsActivated']] !== $user[$this->options['userIsActivatedFlag']]
+    			){
     			return new AuthenticationResult(AuthenticationResult::FAILURE,
     					array(),
     					array('User is not activated.'));
@@ -187,6 +207,7 @@ class LdapRdbmsAdapter extends AbstractAdapter
     				$currentHashOptions
     				);
     		
+    		//FIXME: must rehash if needede
     		if($passwordNeedsRehash === true){
     			//try $em findby id , set e persist
     		}
@@ -207,8 +228,7 @@ class LdapRdbmsAdapter extends AbstractAdapter
      */
     private function findUser($username)
     {
-    	//FIXME: passar por referência a coluna de ativação #9
-    	$dql = sprintf("SELECT u.id, u.%s, u.%s, u.activated
+    	$dql = sprintf("SELECT u.id, u.%s, u.%s
     			FROM %s u
     			WHERE u.%s = :username",
     			$this->identityAttribute,
@@ -216,6 +236,18 @@ class LdapRdbmsAdapter extends AbstractAdapter
     			$this->userEntity,
     			$this->identityAttribute
     			);
+    	
+    	if($this->hasOption('checkUserIsActivated')){
+    		$dql = sprintf("SELECT u.id, u.%s, u.%s, u.%s
+    			FROM %s u
+    			WHERE u.%s = :username",
+    				$this->identityAttribute,
+    				$this->credencialAttribute,
+    				$this->options['checkUserIsActivated'],
+    				$this->userEntity,
+    				$this->identityAttribute
+    				);
+    	}
     	 
     	try {
     		$query = $this->entityManager->createQuery($dql);
@@ -235,14 +267,14 @@ class LdapRdbmsAdapter extends AbstractAdapter
      */
     private function findUserRoles()
     {
-    	//FIXME: precisa de um para para r.user no JOIN: issue #8
     	$dql = sprintf("SELECT r.%s 
     			FROM %s r
-    			JOIN %s u WITH u.id = r.user
+    			JOIN %s u WITH u.id = r.%s
     			WHERE u.%s = :username",
     			$this->roleAttribute,
     			$this->roleEntity,
     			$this->userEntity,
+    			$this->roleUserAssociationAttribute,
     			$this->identityAttribute
     			);
     	
@@ -253,6 +285,18 @@ class LdapRdbmsAdapter extends AbstractAdapter
     	} catch (Exception $e) {
     		throw $e;
     	}
+    }
+    
+    /**
+     * @param string $opt
+     * return boolean
+     */
+    private function hasOption($opt){
+    	return (!empty($this->options) 
+    			&& is_array($this->options)
+    			&& array_key_exists($opt, $this->options)
+//     			&& is_string($this->options[$opt])
+    			);
     }
 
     /**
