@@ -13,6 +13,7 @@ use Zend\Authentication\Adapter\AbstractAdapter;
 use Zend\Authentication\Result as AuthenticationResult;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
+use marcelbonnet\Slim\Auth\Events\SlimAuthEventInterface;
 
 /**
  * Authenticate through LDAP
@@ -51,7 +52,16 @@ class LdapRdbmsAdapter extends AbstractAdapter
     protected $authType 				= null;
     protected $pwdHashFactor			= null;
     protected $pwdHashAlgo			= null;
-    protected $options				= null; 
+    protected $options				= null;
+    
+    /**
+     * @var \marcelbonnet\Slim\Auth\Events\SlimAuthEventInterface
+     */
+    protected $authenticationEvent	= null;
+    /**
+     * @var \marcelbonnet\Slim\Auth\Events\SlimAuthorizationEventInterface
+     */
+    protected $authorizationEvent	= null;
 
     /**
      * As we this Adapter uses Doctrine ORM, we suppose
@@ -95,7 +105,9 @@ class LdapRdbmsAdapter extends AbstractAdapter
     	$authType = self::AUTHENTICATE_LDAP,
     	$pwdHashFactor = 10,
     	$pwdHashAlgo = PASSWORD_DEFAULT,
-    	$options
+    	$options,
+    	$authenticationEvent = null,
+    	$authorizationEvent = null
     ) {
     	self::$configFile		= $configIniFile;
     	$this->entityManager 	= $entityManager;
@@ -109,6 +121,8 @@ class LdapRdbmsAdapter extends AbstractAdapter
     	$this->pwdHashFactor	= $pwdHashFactor;
     	$this->pwdHashAlgo		= $pwdHashAlgo;
     	$this->options			= $options;
+    	$this->authenticationEvent = $authenticationEvent;
+    	$this->authorizationEvent = $authorizationEvent;
     }
 
     /**
@@ -129,9 +143,9 @@ class LdapRdbmsAdapter extends AbstractAdapter
     	
     	
     	if (!$result->isValid()){
-    		/*
-    		 * TODO: log failure to file
-    		 */
+    		if($this->authenticationEvent !== null){
+    			$this->authenticationEvent->onFail($result->getIdentity(), $result->getMessages());
+    		}
     		
     		return new AuthenticationResult(AuthenticationResult::FAILURE
     				, $result->getIdentity()
@@ -142,8 +156,15 @@ class LdapRdbmsAdapter extends AbstractAdapter
     	
     	$user = array(
     			"username" 	=> $this->getIdentity(),
-    			"role"		=> $userRoles
+    			"role"		=> $userRoles,
+    			"onLoginObject"	=> null
     	);
+    	
+    	if($this->authenticationEvent !== null){
+    		$obj = $this->authenticationEvent->onLogin($this->getIdentity(), $userRoles);
+    		$user['onLoginObject'] = $obj;
+    	}
+    	
     	return new AuthenticationResult(AuthenticationResult::SUCCESS, $user, array());
     }
     
